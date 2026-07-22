@@ -15,7 +15,7 @@ EM trending is often manual, repetitive, and spreadsheet-bound: an analyst re-de
 - **Dashboard / overview** — open flags by severity, a severity-ranked list of active excursions and adverse trends, and a per-grade compliance snapshot.
 - **Trend view** — per (location, sample type) time series with **alert**, **action**, and **Annex 1 specification** limit lines drawn in; excursion points highlighted; the baseline-vs-monitoring boundary marked; hover for the exact value, date, and which limits applied.
 - **Flags & excursions** — append-only excursion records (an audit-trail mindset) with full context, filterable by severity.
-- **AI investigation draft** — a server-side Anthropic call turns a single flag into a structured, clearly-labelled draft investigation note (summary, areas to review, immediate checks) framed as prompts for a human — never a conclusion or disposition.
+- **AI investigation draft** — a server-side Google Gemini call turns a single flag into a structured, clearly-labelled draft investigation note (summary, areas to review, immediate checks) framed as prompts for a human — never a conclusion or disposition.
 - **Data** — view the dataset, regenerate the deterministic synthetic data, or import your own results by CSV (validated and normalised on import).
 
 ## Domain rules implemented
@@ -40,7 +40,7 @@ CSV import expects the header `date,room,grade,sample_type,value,unit` and rejec
 
 ## Tech stack
 
-Next.js (App Router) + TypeScript · React · Tailwind CSS · Recharts · Anthropic API (server-side only) · Vitest. No database — the app boots from the bundled seed and holds data in memory.
+Next.js (App Router) + TypeScript · React · Tailwind CSS · Recharts · Google Gemini API (server-side only) · Vitest. No database — the app boots from the bundled seed and holds data in memory.
 
 ## Run locally
 
@@ -53,7 +53,7 @@ Optional — enable AI investigation drafts:
 
 ```bash
 cp .env.example .env.local
-# set ANTHROPIC_API_KEY=... in .env.local
+# set GEMINI_API_KEY=... in .env.local  (get one from https://aistudio.google.com/apikey)
 ```
 
 Without a key the AI feature degrades gracefully to an "unavailable" state; everything else works out of the box on the bundled data.
@@ -66,10 +66,10 @@ npm run seed       # regenerate src/data/seed.json
 
 ## Environment variables
 
-| Variable            | Required | Purpose                                                        |
-| ------------------- | -------- | -------------------------------------------------------------- |
-| `ANTHROPIC_API_KEY` | No       | Enables AI investigation drafts. Read **server-side only**.    |
-| `ANTHROPIC_MODEL`   | No       | Override the Claude model (defaults to the latest Sonnet).     |
+| Variable         | Required | Purpose                                                        |
+| ---------------- | -------- | -------------------------------------------------------------- |
+| `GEMINI_API_KEY` | No       | Enables AI investigation drafts. Read **server-side only**.    |
+| `GEMINI_MODEL`   | No       | Override the Gemini model (defaults to `gemini-2.0-flash`).    |
 
 Secrets live only in environment variables and are never committed; `.env*` files are git-ignored.
 

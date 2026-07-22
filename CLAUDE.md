@@ -10,7 +10,7 @@ A proactive environmental-monitoring (EM) trending & excursion assistant for pha
 
 - Next.js 14 (App Router) + TypeScript, React 18, Tailwind CSS 3.
 - Recharts for charts.
-- Anthropic API for AI investigation drafts — **server-side only** (`src/app/api/investigate/route.ts`), key in `ANTHROPIC_API_KEY`, model via `ANTHROPIC_MODEL` (default `claude-sonnet-5`). Never expose the key to the client.
+- Google Gemini API for AI investigation drafts — **server-side only** (`src/app/api/investigate/route.ts`), key in `GEMINI_API_KEY` (falls back to `GOOGLE_API_KEY`), model via `GEMINI_MODEL` (default `gemini-2.0-flash`). Never expose the key to the client.
 - No database. Bundled synthetic seed (`src/data/seed.json`) + in-memory React state + optional CSV import.
 - Vitest for unit tests. The statistics and flagging logic must stay fully tested — correctness there is the tool's credibility.
 
@@ -42,4 +42,4 @@ UI (`src/app`, `src/components`) is a thin client layer over that logic. `DataPr
 
 ## Deployment
 
-Vercel. Set `ANTHROPIC_API_KEY` as an environment variable in the host to enable AI drafts; the app degrades gracefully without it.
+Vercel. Set `GEMINI_API_KEY` as an environment variable in the host to enable AI drafts; the app degrades gracefully without it.

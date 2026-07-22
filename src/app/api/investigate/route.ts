@@ -1,23 +1,32 @@
-// Server-side AI investigation-draft endpoint.
+// Server-side AI investigation-draft endpoint (Google Gemini).
 //
-// The Anthropic API key is read from the environment ON THE SERVER ONLY and is never
+// The Gemini API key is read from the environment ON THE SERVER ONLY and is never
 // exposed to the client. The endpoint returns a FIRST-DRAFT investigation note framed
 // as prompts for a human investigator — it never decides disposition, release, pass/
 // fail, or CAPA outcome. If no key is configured it degrades gracefully.
 
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
-import { SAMPLE_TYPE_LABEL } from "@/lib/types";
-import { FLAG_RULE_LABEL } from "@/lib/types";
+import { GoogleGenAI } from "@google/genai";
+import { SAMPLE_TYPE_LABEL, FLAG_RULE_LABEL } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5";
+// Model can be overridden via GEMINI_MODEL. gemini-2.0-flash is fast, widely
+// available, and returns text reliably (no thinking-budget pitfalls).
+const MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 const MAX_TOKENS = 1200;
 
 const DRAFT_LABEL =
   "AI-generated draft — for human review only. Not a quality decision.";
+
+const SYSTEM_INSTRUCTION =
+  "You are an assistant to a pharmaceutical environmental-monitoring (EM) team working under EU GMP Annex 1. You draft investigation-support notes for human investigators. You never make quality, disposition, release, or CAPA decisions — you only help structure the human's investigation.";
+
+/** Reads the Gemini key from either common env-var name. */
+function getApiKey(): string | undefined {
+  return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+}
 
 interface InvestigatePayload {
   room: string;
@@ -70,13 +79,13 @@ RULES
 }
 
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = getApiKey();
   if (!apiKey) {
     return NextResponse.json(
       {
         available: false,
         message:
-          "AI drafting unavailable — set ANTHROPIC_API_KEY in the environment to enable investigation drafts.",
+          "AI drafting unavailable — set GEMINI_API_KEY in the environment to enable investigation drafts.",
       },
       { status: 200 },
     );
@@ -90,29 +99,34 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const client = new Anthropic({ apiKey });
-    const message = await client.messages.create({
+    const ai = new GoogleGenAI({ apiKey });
+    const response = await ai.models.generateContent({
       model: MODEL,
-      max_tokens: MAX_TOKENS,
-      system:
-        "You are an assistant to a pharmaceutical environmental-monitoring (EM) team working under EU GMP Annex 1. You draft investigation-support notes for human investigators. You never make quality, disposition, release, or CAPA decisions — you only help structure the human's investigation.",
-      messages: [{ role: "user", content: buildPrompt(payload) }],
+      contents: buildPrompt(payload),
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION,
+        maxOutputTokens: MAX_TOKENS,
+        temperature: 0.6,
+      },
     });
 
-    const text = message.content
-      .filter((b): b is Anthropic.TextBlock => b.type === "text")
-      .map((b) => b.text)
-      .join("\n")
-      .trim();
+    const text = response.text?.trim();
+    if (!text) {
+      return NextResponse.json(
+        {
+          available: true,
+          error:
+            "AI drafting returned no text (the request may have been blocked or truncated). Try again.",
+        },
+        { status: 502 },
+      );
+    }
 
     return NextResponse.json({ available: true, draft: text, label: DRAFT_LABEL });
   } catch (err) {
     const detail = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
-      {
-        available: true,
-        error: `AI drafting failed: ${detail}`,
-      },
+      { available: true, error: `AI drafting failed: ${detail}` },
       { status: 502 },
     );
   }
