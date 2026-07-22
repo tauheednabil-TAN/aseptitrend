@@ -1,8 +1,10 @@
 # AseptiTrend
 
+*A portfolio project by [Tauheed Nabil](https://github.com/tauheednabil-TAN) — demonstrating a working, domain-accurate grasp of pharmaceutical environmental-monitoring trending, built to take the manual, repetitive parts of EM trending off a team's plate.*
+
 **AseptiTrend is a proactive environmental-monitoring (EM) trending and excursion assistant for pharmaceutical aseptic filling.** It ingests viable (settle plate, contact plate, active air) and non-viable airborne particle results from classified cleanrooms (EU GMP Grades A–D), sets data-driven alert and action limits from historical baselines, caps them against the EU GMP Annex 1 (2022) specification ceilings, and continuously screens the current monitoring window for excursions and adverse trends — including the slow upward drift a static spreadsheet tends to hide. For any flag it can draft a first-pass investigation note to hand to a human investigator.
 
-> **Scope & guardrails.** This is a **personal proof-of-concept running entirely on synthetic data**. It is **not validated, not GMP-qualified**, and it **never makes a batch, release, disposition, or quality decision**. Every output is decision-support for a **human-in-the-loop** who reviews and decides. The AI-drafted notes are explicitly labelled "for human review only." These constraints are surfaced throughout the product, not just in this file.
+> **Scope & guardrails.** This is a **portfolio proof-of-concept running entirely on synthetic data**. It is **not validated, not GMP-qualified**, and it **never makes a batch, release, disposition, or quality decision**. Every output is decision-support for a **human-in-the-loop** who reviews and decides. The AI-drafted notes are explicitly labelled "for human review only." These constraints are surfaced throughout the product, not just in this file.
 
 ---
 
