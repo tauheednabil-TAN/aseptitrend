@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AseptiTrend — EM Trending &amp; Excursion Assistant · Tauheed Ahmed Nabil</title>
+<meta name="description" content="A proactive environmental-monitoring trending and excursion assistant for pharmaceutical aseptic filling — data-driven limits against EU GMP Annex 1, adverse-trend detection, and AI-drafted investigation notes. Portfolio project by Tauheed Ahmed Nabil.">
+<style>
+  :root {
+    --ink: #16211c;
+    --ink-soft: #3f4d47;
+    --paper: #f6f4ee;
+    --panel: #ffffff;
+    --line: #d9d5c9;
+    --line-strong: #b9b3a3;
+    --accent: #2f5d50;
+    --accent-soft: #e3ece8;
+    --amber: #9a6a2f;
+    --amber-soft: #f3ead9;
+    --mono: "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Georgia", "Times New Roman", serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 28px; }
+
+  .brandmark { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+  .brandmark .logo {
+    width: 30px; height: 30px; border-radius: 7px; background: var(--accent);
+    color: #fff; display: grid; place-items: center;
+    font-family: var(--mono); font-weight: 700; font-size: 15px;
+  }
+  .brandmark .wm { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+  .brandmark .wm span {
+    color: var(--ink-soft); font-weight: 400; font-family: var(--mono);
+    font-size: 12px; margin-left: 8px; letter-spacing: 0.04em;
+  }
+
+  header { border-bottom: 2px solid var(--ink); padding: 46px 0 26px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 18px;
+  }
+  h1 {
+    font-size: clamp(34px, 6vw, 58px); line-height: 1.02;
+    margin: 0 0 14px; letter-spacing: -0.01em; font-weight: 700;
+  }
+  .sub { font-size: 18px; color: var(--ink-soft); max-width: 660px; margin: 0 0 22px; }
+
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 26px; }
+  .cta {
+    display: inline-block; font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper);
+    background: var(--accent); padding: 11px 18px; border-radius: 4px; text-decoration: none;
+  }
+  .cta:hover { background: #274c42; }
+  .cta.secondary { background: transparent; color: var(--accent); border: 1px solid var(--line-strong); }
+  .cta.secondary:hover { background: var(--accent-soft); }
+
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px 26px;
+    font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
+    border-top: 1px solid var(--line); padding-top: 18px;
+  }
+  .meta b { color: var(--ink); font-weight: 600; }
+
+  section { padding: 46px 0; border-bottom: 1px solid var(--line); }
+  .sec-label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent);
+    display: flex; align-items: center; gap: 12px; margin: 0 0 22px;
+  }
+  .sec-label::before {
+    content: attr(data-num); display: inline-block; min-width: 30px;
+    padding: 2px 0; text-align: center; background: var(--ink);
+    color: var(--paper); border-radius: 2px; font-size: 11px;
+  }
+  h2 { font-size: 28px; margin: 0 0 14px; letter-spacing: -0.01em; }
+  p.lead { font-size: 17px; color: var(--ink-soft); max-width: 720px; }
+
+  .context {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    padding: 20px 24px; margin-top: 24px; font-size: 15.5px; max-width: 760px;
+  }
+  .context b { color: var(--accent); }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 22px; margin-top: 26px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 6px; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .card-tag {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); padding: 14px 18px 0;
+  }
+  .card h3 { margin: 6px 18px 4px; font-size: 19px; }
+  .card p { margin: 0 18px 14px; font-size: 14.5px; color: var(--ink-soft); }
+
+  .shot {
+    margin: 0 14px 14px; border: 1px solid var(--line);
+    border-radius: 4px; overflow: hidden; background: var(--paper);
+  }
+  .shot img { width: 100%; display: block; }
+  .caption {
+    font-family: var(--mono); font-size: 11px; color: var(--ink-soft);
+    margin: 0 18px 16px; letter-spacing: 0.03em;
+  }
+
+  .maplist { list-style: none; padding: 0; margin: 8px 0 0; }
+  .maplist li {
+    display: grid; grid-template-columns: 220px 1fr; gap: 20px;
+    padding: 14px 0; border-top: 1px solid var(--line); align-items: baseline;
+  }
+  .maplist li:last-child { border-bottom: 1px solid var(--line); }
+  .maplist .role {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .maplist .what { color: var(--ink-soft); font-size: 15px; }
+
+  .disclaimer { font-size: 13.5px; color: var(--ink-soft); font-style: italic; margin-top: 26px; max-width: 760px; }
+
+  footer { padding: 40px 0 60px; }
+  footer .name { font-size: 20px; font-weight: 700; }
+  footer .contact { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); margin-top: 8px; }
+  footer a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+
+  @media (max-width: 700px) {
+    .maplist li { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brandmark">
+      <span class="logo">A</span>
+      <span class="wm">AseptiTrend <span>EM TRENDING ASSISTANT</span></span>
+    </div>
+    <p class="eyebrow">Portfolio project · Pharmaceutical environmental monitoring</p>
+    <h1>AseptiTrend</h1>
+    <p class="sub">
+      A proactive environmental-monitoring (EM) trending and excursion assistant for
+      aseptic filling. It sets data-driven limits against EU GMP Annex 1, catches the
+      excursions and slow drifts a spreadsheet misses, and drafts a first-pass
+      investigation note for a human to review.
+    </p>
+    <div class="cta-row">
+      <a class="cta" href="https://aseptitrend.vercel.app" target="_blank" rel="noopener">View the live app →</a>
+      <a class="cta secondary" href="https://github.com/tauheednabil-TAN/aseptitrend" target="_blank" rel="noopener">Source on GitHub</a>
+    </div>
+    <div class="meta">
+      <span><b>Built by</b> Tauheed Ahmed Nabil</span>
+      <span><b>Stack</b> Next.js · TypeScript · Recharts · Google Gemini · Vitest</span>
+      <span><b>Purpose</b> Preparation for an EM / Digital Automation team role</span>
+    </div>
+  </div>
+</header>
+
+<!-- WHY -->
+<section>
+  <div class="wrap">
+    <p class="sec-label" data-num="00">Why I built this</p>
+    <h2>Taking the repetitive part of EM trending off the team's plate</h2>
+    <p class="lead">
+      Environmental-monitoring trending is often manual and spreadsheet-bound: an analyst
+      re-derives alert and action limits, eyeballs charts location by location, and can
+      miss a gradual drift that never trips a single-point limit until it finally breaches.
+      I don't have production EM hours yet, so rather than claim experience I don't have, I
+      built a working tool that does that first pass — computing limits, screening every
+      series against the applicable rules, and ranking what needs a human's attention.
+    </p>
+    <div class="context">
+      <b>Regulated-industry framing.</b> Because EM work in pharma has to be auditable, I
+      treated every part of this as if it had to survive review: limits are capped against
+      the EU GMP Annex 1 (2022) ceilings, flags are append-only records with UTC timestamps,
+      and a human reviews everything — the tool never makes a batch, release, or quality
+      decision.
+    </div>
+  </div>
+</section>
+
+<!-- 01 DASHBOARD -->
+<section>
+  <div class="wrap">
+    <p class="sec-label" data-num="01">Overview &amp; triage</p>
+    <h2>Every open excursion, ranked by severity</h2>
+    <p class="lead">
+      The dashboard answers the first question of any monitoring shift — what needs
+      attention now. Open flags are counted by severity, active excursions and adverse
+      trends are listed most-severe-first, and a per-grade snapshot shows where the risk sits.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <span class="card-tag">Dashboard</span>
+        <h3>Monitoring overview</h3>
+        <p>1,080 synthetic results across 24 monitoring series; 38 open flags in the current window, sorted so the high-severity events surface first.</p>
+        <div class="shot"><img src="shots/dashboard.png" alt="AseptiTrend dashboard showing open flags by severity, active excursions, and per-grade compliance snapshot"></div>
+        <p class="caption">// AseptiTrend — Dashboard, open flags by severity + per-grade snapshot</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 TRENDS -->
+<section>
+  <div class="wrap">
+    <p class="sec-label" data-num="02">Trend detection</p>
+    <h2>Limits drawn in, excursions caught</h2>
+    <p class="lead">
+      Each location and sample type is charted with its alert, action, and EU GMP Annex 1
+      specification limits drawn in. Data-driven limits (90th / 95th percentile) come from
+      the historical baseline; the recent monitoring window is screened against them.
+    </p>
+    <div class="context">
+      <b>Grade A is "no growth".</b> Any viable recovery of ≥1 CFU is an immediate
+      action-level event, regardless of statistics — shown here as a single 2 CFU/m³
+      recovery flagged on an otherwise flat Grade A line.
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="card-tag">Trend view</span>
+        <h3>Grade A active air</h3>
+        <p>A single 2 CFU/m³ recovery inside the monitoring window, flagged action-level against the Annex 1 "no growth" expectation. Hover shows the exact value, date, and which limits applied.</p>
+        <div class="shot"><img src="shots/trends.png" alt="AseptiTrend trend chart of Grade A active air with a single action-level recovery, alert, action and Annex 1 limit lines"></div>
+        <p class="caption">// AseptiTrend — Trend view, Grade A viable recovery caught against Annex 1</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 FLAGS + AI -->
+<section>
+  <div class="wrap">
+    <p class="sec-label" data-num="03">Excursion flags &amp; AI draft</p>
+    <h2>The drift a spreadsheet hides — and a first-draft investigation</h2>
+    <p class="lead">
+      Beyond single-point breaches, AseptiTrend detects adverse trends: a gradual climb
+      toward the action limit that never trips a single-point rule until it breaches. Every
+      flag is an append-only record with full context, and one click drafts an investigation
+      note for a human to review and complete.
+    </p>
+    <div class="context">
+      <b>Human-in-the-loop.</b> The AI (Google Gemini, called server-side) drafts the note —
+      summary, areas to review, immediate checks — but never decides disposition, release,
+      or CAPA outcome. Every draft is labelled "AI-generated draft — for human review only."
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="card-tag">Flags · AI investigation</span>
+        <h3>Gradual drift to an action breach</h3>
+        <p>Compounding Suite settle plates climb 7 → 8 → 12 → 18 → 26 → 34 → 45 → 60 CFU across the monitoring window — alert (8) and action (9) crossed early, the Annex 1 spec (50) breached at the end. "Generate investigation draft" produces the note.</p>
+        <div class="shot"><img src="shots/flags.png" alt="AseptiTrend flag detail for a Grade C settle plate showing a rising sequence of results and the Generate investigation draft action"></div>
+        <p class="caption">// AseptiTrend — Flag detail, consecutive-rise trend + action breach, with AI draft</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DATA -->
+<section>
+  <div class="wrap">
+    <p class="sec-label" data-num="04">Data &amp; synthetic model</p>
+    <h2>Reproducible synthetic data, or bring your own</h2>
+    <p class="lead">
+      The app runs on a seeded, reproducible synthetic dataset — ~90 days across all four
+      grades with deliberately injected storylines so the tool has something real to find.
+      Results can also be imported from CSV, validated and normalised on the way in.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <span class="card-tag">Data</span>
+        <h3>Synthetic dataset + CSV import</h3>
+        <p>A deterministic generator with three storylines: a gradual drift to an action breach, an isolated Grade A viable hit, and a location with repeated alert-level results. CSV import validates every row (date, room, grade, sample_type, value, unit).</p>
+        <div class="shot"><img src="shots/data.png" alt="AseptiTrend data page showing the synthetic dataset controls, CSV import, and a results table"></div>
+        <p class="caption">// AseptiTrend — Data page, synthetic dataset with CSV import</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 MAPS -->
+<section>
+  <div class="wrap">
+    <p class="sec-label" data-num="05">How it maps to the role</p>
+    <h2>Practice mapped to an EM analyst's work</h2>
+    <ul class="maplist">
+      <li>
+        <span class="role">Trend analysis</span>
+        <span class="what">Data-driven alert (P90) and action (P95) limits, capped below the Annex 1 ceiling and recomputed whenever new results arrive.</span>
+      </li>
+      <li>
+        <span class="role">Excursion management</span>
+        <span class="what">Five rules — single-point breaches, consecutive-rise trends, repeated alerts, and the Grade A no-growth rule — each hit an append-only record.</span>
+      </li>
+      <li>
+        <span class="role">Regulatory limits</span>
+        <span class="what">EU GMP Annex 1 (2022) maxima for Grades A–D, viable and non-viable, hardcoded as the governing specification ceiling.</span>
+      </li>
+      <li>
+        <span class="role">Investigation support</span>
+        <span class="what">AI-drafted investigation notes that structure the human's review — never a quality, disposition, or release decision.</span>
+      </li>
+      <li>
+        <span class="role">Reducing manual work</span>
+        <span class="what">Automates the repetitive first pass of EM trending so the team spends time on judgement, not re-deriving limits.</span>
+      </li>
+      <li>
+        <span class="role">Engineering</span>
+        <span class="what">Next.js + TypeScript, unit-tested statistics and flagging logic (44 passing tests), deployed on Vercel.</span>
+      </li>
+    </ul>
+    <p class="disclaimer">
+      This is a personal portfolio project on synthetic data — not validated, not
+      GMP-qualified, and it never makes a batch, release, or quality decision. It reflects
+      how I prepare: by building the real workflow in real tools rather than only reading
+      about it. I'm keen to apply and extend this in a live EM environment.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="name">Tauheed Ahmed Nabil</div>
+    <div class="contact">
+      CS Student, Niels Brock Copenhagen · QA Tester ·
+      <a href="mailto:tauheednabil@gmail.com">tauheednabil@gmail.com</a> ·
+      <a href="https://www.linkedin.com/in/tauheed-ahmed-nabil-26a1422b5" target="_blank" rel="noopener">LinkedIn</a> ·
+      <a href="https://github.com/tauheednabil-TAN/aseptitrend" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

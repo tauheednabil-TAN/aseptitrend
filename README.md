@@ -77,7 +77,7 @@ Secrets live only in environment variables and are never committed; `.env*` file
 
 ## Live URL
 
-_Deploy to Vercel and add the public URL here._
+**https://aseptitrend.vercel.app** — live on Vercel (runs on the bundled synthetic data out of the box).
 
 ## Disclaimer
 
